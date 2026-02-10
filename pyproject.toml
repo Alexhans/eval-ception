@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eval-ception-core"
+version = "0.1.0"
+description = "Shared core components for eval-ception (agents, adapters, and utilities)."
+requires-python = ">=3.10"
+dependencies = [
+    "playwright",
+    "ollama",
+]
+
+[project.optional-dependencies]
+deepeval = [
+    "deepeval",
+]
+
+[project.urls]
+Repository = "https://github.com/Alexhans/eval-ception"
+
+[project.scripts]
+baseline-agent = "eval_ception_core.baseline.crawler:main"
+wrapped-cli-agent = "eval_ception_core.cli_wrapper_agent:main"
+wrapped-cli-grader = "eval_ception_core.cli_wrapper_grader:main"

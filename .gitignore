@@ -1,0 +1,21 @@
+# VSCode
+.vscode
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# DeepEval
+.deepeval/
+
+# Promptfoo
+.promptfoo/
+*.swp
+
+# Node
+node_modules/
+
+# Environment
+.env
+.env.local

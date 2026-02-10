@@ -1,0 +1,115 @@
+description: "AI Evals website question answering tests"
+
+
+providers:
+  - id: "python:ollama_provider.py"
+    label: "ollama_agent"
+    config:
+      includeDebugMetrics: true
+      appendUsageToOutput: true
+  - id: file://promptfoo_provider_codex.py
+    label: "codex"
+    config:
+      includeDebugMetrics: true
+      appendUsageToOutput: true
+  - id: file://promptfoo_provider_claude.py
+    label: "claude"
+    config:
+      includeDebugMetrics: true
+      appendUsageToOutput: true
+  - id: file://promptfoo_provider_opencode.py
+    label: "opencode_ai"
+    config:
+      includeDebugMetrics: true
+      appendUsageToOutput: true
+
+# Default LLM grader for non-deterministic assertions.
+# Override at runtime with:
+#   OLLAMA_BASE_URL=http://127.0.0.1:11434 --grader "ollama:chat:<model>", or
+#   --grader "openai:chat:<model>" (set OPENAI_BASE_URL / OPENAI_API_KEY as needed), or
+#   --grader "python:grader_provider.py" (CLI-based grader, no direct API required)
+defaultTest:
+  options:
+    provider: "ollama:chat:deepseek-r1:14b"
+
+prompts:
+  - "{{question}}"
+
+tests:
+  - vars:
+      # Educational note:
+      # "this website" (instead of "ai-evals.io") intentionally tests contextual grounding.
+      # The agent must infer target context from setup/system instructions, not just explicit naming.
+      question: "Who created this website?"
+    assert:
+      - type: icontains
+        value: "Alex"
+      - type: icontains
+        value: "Guglielmone"
+
+  - vars:
+      question: "What tools are open source? (Name all, don't name those that aren't)"
+    assert:
+      # Example tradeoff for deterministic tests:
+      # this is intentionally partial (cheap/fast) rather than exhaustive.
+      # In production, decide whether to require all expected frameworks.
+      - type: icontains
+        value: "Promptfoo"
+      - type: icontains
+        value: "DeepEval"
+      - type: not-icontains
+        value: "Braintrust"
+      - type: not-icontains
+        value: "Langsmith"
+
+  - vars:
+      question: "Does promptfoo have built-in caching? Start your answer with lowercase yes or no."
+    assert:
+      # Educational note:
+      # For yes/no questions, ask whether you can constrain output shape (e.g., starts-with or JSON field)
+      # and keep this deterministic. Otherwise you may pay LLM-as-judge cost for a simple classification.
+      # Stricter deterministic yes/no check: require answer to start with expected token.
+      - type: regex
+        value: "^\\s*yes\\b"
+
+  - vars:
+      question: "Does deepeval have built-in caching? Start your answer with lowercase yes or no."
+    assert:
+      - type: regex
+        value: "^\\s*no\\b"
+
+  - vars:
+      question: "Does Ragas have confirmed support for streaming evaluation? Start your answer with one of: lowercase yes, no, unknown"
+    assert:
+      - type: regex
+        value: "^\\s*unknown\\b"
+
+  # LLM-as-judge tests (non-deterministic)
+  - vars:
+      question: "What methodology does this website use to evaluate tools?"
+    assert:
+      # Tradeoff note:
+      # You could split this into multiple llm-rubric assertions (one per requirement)
+      # for clearer per-criterion failure signals. In this tutorial we keep a single rubric
+      # for speed and lower grading cost.
+      - type: llm-rubric
+        value: >
+          Pass only if the answer clearly includes ALL of the following:
+          1) The methodology is evidence-based / hands-on testing.
+          2) It explains the legend idea that uppercase marks tested claims (for example Y/N/P),
+             and lowercase marks documentation claims not yet verified (for example y/n/p).
+          3) It mentions unknown/`?` is used when information is not established.
+          Fail if one or more required elements are missing, or if the answer
+          invents unsupported methodology details.
+
+  - vars:
+      question: "How does this website explain the value of AI evals to different audiences?"
+    assert:
+      - type: llm-rubric
+        value: >
+          The answer should mention that the site tailors its explanation to multiple
+          roles. It should reference at least some of: software engineers (control,
+          move fast without regressions), product managers (verifiable PoCs, quality
+          over time), scientists (reduce manual checking, grounded experiments),
+          and non-technical founders (provable, auditable, reduce risk). The answer
+          should capture that different roles get different value from evals.
