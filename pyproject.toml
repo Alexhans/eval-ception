@@ -16,6 +16,10 @@ dependencies = [
 deepeval = [
     "deepeval",
 ]
+langfuse = [
+    "langfuse>=2,<3",
+    "pytest",
+]
 
 [project.urls]
 Repository = "https://github.com/Alexhans/eval-ception"

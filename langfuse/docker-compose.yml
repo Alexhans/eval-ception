@@ -1,0 +1,43 @@
+# Copy .env.example to .env before running: cp .env.example .env
+# Then: docker compose up -d
+
+services:
+  langfuse-server:
+    image: langfuse/langfuse:2
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/langfuse
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      SALT: ${SALT}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      LANGFUSE_INIT_ORG_ID: my-org
+      LANGFUSE_INIT_ORG_NAME: "Eval-ception"
+      LANGFUSE_INIT_PROJECT_ID: my-project
+      LANGFUSE_INIT_PROJECT_NAME: "Eval-ception"
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_INIT_PROJECT_SECRET_KEY}
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL}
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD}
+      LANGFUSE_INIT_USER_NAME: Admin
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  langfuse_postgres_data:

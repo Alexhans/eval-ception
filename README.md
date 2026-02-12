@@ -11,7 +11,7 @@ Run a qualification exam for an agent that answers questions about your domain.
 
 See [`docs/simple-exam.md`](docs/simple-exam.md) for the exam model, source-of-truth rules,
 and direct links to each framework's exam/data files.
-Short version: each framework folder (`promptfoo/`, `deepeval/`)
+Short version: each framework folder (`promptfoo/`, `deepeval/`, `langfuse/`)
 implements the same exam idea with different tooling mechanics.
 
 ## Agent paths
@@ -57,6 +57,9 @@ pip install -e .
 
 # DeepEval path
 pip install -e ".[deepeval]"
+
+# Langfuse path
+pip install -e ".[langfuse]"
 ```
 
 ### Optional: test baseline agent standalone first
@@ -108,6 +111,7 @@ For framework-specific commands and options:
 
 - Promptfoo: [`promptfoo/README.md`](promptfoo/README.md)
 - DeepEval: [`deepeval/README.md`](deepeval/README.md)
+- Langfuse: [`langfuse/README.md`](langfuse/README.md)
 
 Promptfoo includes smoke/full exam commands, provider filtering, and grader options
 (Ollama, OpenAI-compatible URL, and CLI-wrapper grader).
