@@ -10,11 +10,21 @@ requires-python = ">=3.10"
 dependencies = [
     "playwright",
     "ollama",
+    "jsonschema",
 ]
 
 [project.optional-dependencies]
 deepeval = [
     "deepeval",
+]
+langfuse = [
+    "langfuse>=2,<3",
+    "pytest",
+]
+phoenix = [
+    "arize-phoenix-evals>=2.0.0",
+    "litellm",
+    "pytest",
 ]
 
 [project.urls]
@@ -24,3 +34,4 @@ Repository = "https://github.com/Alexhans/eval-ception"
 baseline-agent = "eval_ception_core.baseline.crawler:main"
 wrapped-cli-agent = "eval_ception_core.cli_wrapper_agent:main"
 wrapped-cli-grader = "eval_ception_core.cli_wrapper_grader:main"
+promptfoo-results-to-ai-evals-cert = "eval_ception_core.adapters.promptfoo_results_to_ai_evals_cert:main"

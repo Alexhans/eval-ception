@@ -2,6 +2,19 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .baseline import ask, setup_logging
+# Keep package import lightweight so adapter CLIs can run without optional heavy deps.
+
+
+def ask(*args, **kwargs):
+    from .baseline import ask as _ask
+
+    return _ask(*args, **kwargs)
+
+
+def setup_logging(*args, **kwargs):
+    from .baseline import setup_logging as _setup_logging
+
+    return _setup_logging(*args, **kwargs)
+
 
 __all__ = ["ask", "setup_logging"]

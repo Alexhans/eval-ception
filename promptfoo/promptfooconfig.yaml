@@ -1,5 +1,9 @@
 description: "AI Evals website question answering tests"
 
+tags:
+  exam_id: simple-exam
+  exam_version: "0.1.0"
+  exam_source: "https://github.com/Alexhans/eval-ception/blob/main/docs/simple-exam.md"
 
 providers:
   - id: "python:ollama_provider.py"
@@ -107,9 +111,7 @@ tests:
     assert:
       - type: llm-rubric
         value: >
-          The answer should mention that the site tailors its explanation to multiple
-          roles. It should reference at least some of: software engineers (control,
-          move fast without regressions), product managers (verifiable PoCs, quality
-          over time), scientists (reduce manual checking, grounded experiments),
-          and non-technical founders (provable, auditable, reduce risk). The answer
-          should capture that different roles get different value from evals.
+          Pass if the answer references at least three distinct roles or audiences
+          (e.g. engineers, product managers, scientists, founders) and explains
+          a different value or benefit for each. Fail if it gives a generic
+          explanation that does not differentiate by role.

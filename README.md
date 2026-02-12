@@ -1,94 +1,122 @@
-# Eval-ception
+# Promptfoo Evals
 
-Quickly test the evals concept against `ai-evals.io` (as shown in the tutorial):
-https://ai-evals.io/cookbook/eval-ception.html
+Tests for AI-Evals website question answering using Promptfoo.
 
-## What this repo is for
+## Prerequisites
 
-Run a qualification exam for an agent that answers questions about your domain.
-
-## What The Exam Is
-
-See [`docs/simple-exam.md`](docs/simple-exam.md) for the exam model, source-of-truth rules,
-and direct links to each framework's exam/data files.
-Short version: each framework folder (`promptfoo/`, `deepeval/`)
-implements the same exam idea with different tooling mechanics.
-
-## Agent paths
-
-1. Custom provider (recommended default)
-2. CLI wrappers (`codex`, `claude`, `opencode_ai`)
-3. Local model (`ollama_agent`) via baseline Playwright + Ollama agent
-
-## Choose your path
-
-- Custom provider: start in `promptfoo/README.md`, then implement `call_api(...)`
-  in `promptfoo/ollama_provider.py` (wired as `ollama_agent` label in this starter config).
-  First run:
-  `cd promptfoo && npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^ollama_agent$" -n 1 --verbose`
-- CLI wrappers (`codex`/`claude`/`opencode_ai`): start in `promptfoo/README.md`.
-  First run:
-  `cd promptfoo && npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^codex$" -n 1 --verbose`
-- Local model (`ollama_agent`): install models below, then run:
-  `cd promptfoo && npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^ollama_agent$" -n 1 --verbose`
-
-## Quick start (local model path)
+From repo root:
 
 ```bash
-git clone https://github.com/Alexhans/eval-ception
-cd eval-ception
-
-# shared core package (installs baseline-agent CLI)
 pip install -e .
+```
 
-# local models
+For local-model path (`ollama_agent`) only:
+
+```bash
 ollama pull qwen3:8b
 ollama pull deepseek-r1:14b
 ```
 
-Defaults above match this repo's tested setup (`qwen3:8b` for agent, `deepseek-r1:14b` for grader).
-They do not need to be different models; using the same model for both is valid.
+These are tested defaults in this repo (agent=`qwen3:8b`, grader=`deepseek-r1:14b`).
+You can use the same model for both agent and grader if preferred.
 
-## Install by tool
-
-```bash
-# Promptfoo path (Node-based; no extra Python deps required beyond base)
-pip install -e .
-
-# DeepEval path
-pip install -e ".[deepeval]"
-```
-
-### Optional: test baseline agent standalone first
+## Quick run
 
 ```bash
-baseline-agent --log-level DEBUG "Who created the website ai-evals.io?"
+cd promptfoo
 ```
 
-`-v` is a shortcut for `INFO`. Use `--log-level DEBUG` for debug output.
+Smoke test (single deterministic question):
 
-### Optional: test wrapped CLI agent standalone
+```bash
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^ollama_agent$" -n 1 --verbose
+```
+
+Full exam (all 7 tests):
+
+```bash
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^ollama_agent$" --verbose
+```
+
+Open results:
+
+```bash
+npx promptfoo view
+```
+
+## Provider labels
+
+Use `--filter-providers` with one of:
+- `^ollama_agent$`
+- `^codex$`
+- `^claude$`
+- `^opencode_ai$`
+
+Examples:
+
+```bash
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^codex$"
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^claude$"
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^opencode_ai$"
+```
+
+Override grader model:
+
+```bash
+OLLAMA_BASE_URL=http://127.0.0.1:11434 \
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^codex$" --grader "ollama:chat:deepseek-r1:14b"
+```
+
+Custom/OpenAI-compatible grader URL example:
+
+```bash
+OPENAI_API_KEY=your-key OPENAI_BASE_URL=https://your-grader-endpoint/v1 \
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^codex$" --grader "openai:chat:gpt-4.1-mini"
+```
+
+No-API grader path (use CLI wrapper as grader):
 
 ```bash
 export I_KNOW_WHAT_IM_DOING=true
-wrapped-cli-agent --agent codex --url https://ai-evals.io/ --usage --json "What is this site about?"
+export CLI_GRADER_AGENT=codex
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^codex$" --grader "python:grader_provider.py"
 ```
 
-### Optional: test wrapped CLI grader standalone
+CI shorthand (same behavior, less explicit acknowledgment):
+
+```bash
+I_KNOW_WHAT_IM_DOING=true CLI_GRADER_AGENT=codex \
+npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^codex$" --grader "python:grader_provider.py"
+```
+
+## CLI wrapper notes
+
+For CLI wrapper providers (`codex`, `claude`, `opencode_ai`):
+- Set `I_KNOW_WHAT_IM_DOING=true`
+- Understand these wrappers execute external CLIs and may inherit their permissions
+- Prefer `ollama_agent`/`baseline-agent` path for safer local evaluation
+
+Standalone wrapper example:
 
 ```bash
 export I_KNOW_WHAT_IM_DOING=true
-wrapped-cli-grader --agent codex --json "Return PASS if the answer satisfies the rubric."
+wrapped-cli-agent --agent codex --json "What is this site about?"
 ```
 
-Localhost testing example:
+Standalone grader wrapper example:
 
 ```bash
 export I_KNOW_WHAT_IM_DOING=true
+wrapped-cli-grader --agent codex --json "Return PASS if this answer satisfies the rubric: ..."
+```
+
+Localhost target example:
+
+```bash
 wrapped-cli-agent --agent codex --url http://127.0.0.1:1234 --json "What is this site about?"
 ```
 
-If you want to test against a local copy of the site, clone and serve:
+To run a local target site:
 
 ```bash
 git clone https://github.com/Alexhans/ai-evals
@@ -96,18 +124,38 @@ cd ai-evals/evals_site/_site
 python -m http.server 1234
 ```
 
-Security notes for wrapped CLI agent:
-- Requires explicit opt-in: `I_KNOW_WHAT_IM_DOING=true`
-- Executes external CLI agents and may grant tool/network permissions depending on those CLIs
-- Intended for controlled environments; for safer local baseline use `baseline-agent`
-- Hardening roadmap: sandbox profiles (`strace` / `bwrap`)
+## Configuration summary
 
-## Eval tool guides
+Single source of truth: `promptfooconfig.yaml`.
 
-For framework-specific commands and options:
+Provider labels currently configured:
 
-- Promptfoo: [`promptfoo/README.md`](promptfoo/README.md)
-- DeepEval: [`deepeval/README.md`](deepeval/README.md)
+- `ollama_agent` via `python:ollama_provider.py`
+- `codex` via `file://promptfoo_provider_codex.py`
+- `claude` via `file://promptfoo_provider_claude.py`
+- `opencode_ai` via `file://promptfoo_provider_opencode.py`
+- CLI-based grader adapter via `python:grader_provider.py` (optional)
 
-Promptfoo includes smoke/full exam commands, provider filtering, and grader options
-(Ollama, OpenAI-compatible URL, and CLI-wrapper grader).
+Shared baseline agent env vars:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `BASE_URL` | `https://ai-evals.io` | Target website |
+| `OLLAMA_MODEL` | `qwen3:8b` | Ollama model |
+| `MAX_PAGES` | `10` | Max pages to crawl |
+
+Run against localhost:
+
+```bash
+BASE_URL=http://localhost:3000 npx promptfoo eval -c promptfooconfig.yaml --filter-providers "^ollama_agent$"
+```
+
+## Temporary: Airflow Translation Exam Example
+
+This repo also includes a separate, in-progress Airflow localization example.
+
+- Exam config: `exams/airflow-localizer-es/promptfooconfig.yaml`
+- Cert JSON: `certs/airflow-localizer-es/airflow-es-localizer-exam-pydantic-agent.cert.json`
+- Quick guide: `docs/start-here.md`
+
+This section is temporary and does not replace the main "eval this site" workflow above.

@@ -1,0 +1,174 @@
+{
+  "$schema": "https://spec.ai-evals.io/cert/v0.1.0/schema.json",
+  "exam": {
+    "id": "airflow-localizer-es-incremental",
+    "version": "0.1.0",
+    "source": "airflow/.github/skills/airflow-translations/SKILL.md"
+  },
+  "cert": {
+    "id": "eval-FEx-2026-02-22T22:16:04",
+    "issued": "2026-02-22"
+  },
+  "agent": {
+    "name": "pydantic_skills_ollama"
+  },
+  "environment": {
+    "evaluated_at": "2026-02-22T22:16:04.394Z",
+    "framework": "promptfoo",
+    "framework_version": "0.120.25",
+    "platform": "linux/x64",
+    "total_duration_ms": 3213,
+    "grading_tokens": 2259
+  },
+  "evaluator": {
+    "name": "promptfoo",
+    "version": "0.120.25",
+    "grader_model": "ollama:chat:deepseek-r1:14b"
+  },
+  "items": [
+    {
+      "id": "Q1",
+      "question": "Mark {{ '{{type}}' }} as {{ '{{state}}' }}",
+      "check_type": "deterministic",
+      "expected": "{{ '{{type}}' }} | {{ '{{state}}' }} | must not contain: {{ '{{tipo}}' }} | must not contain: {{ '{{estado}}' }}",
+      "output": "Marcar {{type}} como {{state}}",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 81,
+      "cached": true
+    },
+    {
+      "id": "Q2",
+      "question": "Press {{ '{{hotkey}}' }} to scroll to {{ '{{direction}}' }}",
+      "check_type": "deterministic",
+      "expected": "{{ '{{hotkey}}' }} | {{ '{{direction}}' }} | must not contain: {{ '{{tecla}}' }} | must not contain: {{ '\\{\\{direcci[oó]n\\}\\}' }}",
+      "output": "Presiona {{hotkey}} para desplazarte a {{direction}}",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 84,
+      "cached": true
+    },
+    {
+      "id": "Q3",
+      "question": "The example Dag uses XCom variables to pass state between tasks. It has a Pool for resources that are scarce. The Triggerer is an internal element. Backfills can be triggered by the API.",
+      "check_type": "deterministic",
+      "expected": "Dag | XCom | Pool | Backfill | Triggerer | must not contain: DAG",
+      "output": "El ejemplo Dag usa variables XCom para pasar estado entre tareas. Tiene un Pool para recursos que son escasos. El Triggerer es un elemento interno. Backfills pueden ser activados por la API.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 84,
+      "cached": true
+    },
+    {
+      "id": "Q4",
+      "question": "{\"task\":\"Task\",\"taskInstance\":\"Task Instance\",\"taskGroup\":\"Task Group\"}",
+      "check_type": "deterministic",
+      "expected": " | \"task\" | \"taskInstance\" | \"taskGroup\" | Tarea | Instancia de Tarea | Grupo de Tareas",
+      "output": "{\"task\":\"Tarea\",\"taskInstance\":\"Instancia de Tarea\",\"taskGroup\":\"Grupo de Tareas\"}",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 86,
+      "cached": true
+    },
+    {
+      "id": "Q5",
+      "question": "{\"dagRun_one\":\"Dag Run\",\"dagRun_other\":\"Dag Runs\",\"dagRun_many\":\"Dag Runs\"}",
+      "check_type": "deterministic",
+      "expected": " | \"dagRun_one\" | \"dagRun_other\" | \"dagRun_many\" | Ejecuci | Dag",
+      "output": "{\"dagRun_one\":\"Ejecución del Dag\",\"dagRun_other\":\"Ejecuciones del Dag\",\"dagRun_many\":\"Ejecuciones del Dag\"}",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 13,
+      "cached": true
+    },
+    {
+      "id": "Q6",
+      "question": "Are you sure you want to delete {{ '{{resourceName}}' }}? This action cannot be undone.",
+      "check_type": "deterministic",
+      "expected": "{{ '{{resourceName}}' }} | deshacer | must not contain: {{ '{{nombreRecurso}}' }} | must not contain: ^\".*\"$",
+      "output": "¿Está seguro de que desea eliminar {{resourceName}}? Esta acción no se puede deshacer.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 13,
+      "cached": true
+    },
+    {
+      "id": "Q7",
+      "question": "Task is currently in a {{ '{{state}}' }} state started by user {{ '{{user}}' }} at {{ '{{time}}' }}. The user is unable to clear this task until it is done running or a user unchecks the \"Prevent rerun if task is running\" option in the clear task dialog.",
+      "check_type": "deterministic",
+      "expected": "{{ '{{state}}' }} | {{ '{{user}}' }} | {{ '{{time}}' }} | tarea | must not contain: ^\".*\"$",
+      "output": "La tarea está actualmente en un estado {{state}} iniciada por el usuario {{user}} a las {{time}}. El usuario no puede limpiar esta tarea hasta que haya terminado de ejecutarse o hasta que desmarque la opción “Prevenir la reejecución si la tarea está en ejecución” en el cuadro de diálogo de limpieza de tareas.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 14,
+      "cached": true
+    },
+    {
+      "id": "Q8",
+      "question": "{\"hotkey\":\"e\",\"tooltip\":\"Press {{ '{{hotkey}}' }} to toggle expand\"}",
+      "check_type": "deterministic",
+      "expected": " | \"hotkey\" | \"e\" | {{ '{{hotkey}}' }} | must not contain: {{ '{{tecla}}' }}",
+      "output": "{\"hotkey\":\"e\",\"tooltip\":\"Pulse {{hotkey}} para expandir\"}",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 15,
+      "cached": true
+    },
+    {
+      "id": "Q9",
+      "question": "{\"triggerRule\":\"Trigger Rule\",\"triggeredBy\":\"Triggered By\"}",
+      "check_type": "llm-as-judge",
+      "expected": " | rubric: Pass only if the translation disambiguates noun vs verb usage correctly: 1) \"triggerRule\" is translated as a rule/label term (for example, \"Regla de Activación\"), 2) \"triggeredBy\" is translated as a passive/agent phrase (for example, \"Activado por\"), and 3) it does not keep both as untranslated \"Trigger\".",
+      "output": "{\"triggerRule\":\"Regla de activación\",\"triggeredBy\":\"Activado por\"}",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 13,
+      "cached": true
+    },
+    {
+      "id": "Q10",
+      "question": "Task is currently in a {{ '{{state}}' }} state started by user {{ '{{user}}' }} at {{ '{{time}}' }}. The user is unable to clear this task until it is done running or a user unchecks the \"Prevent rerun if task is running\" option in the clear task dialog.",
+      "check_type": "llm-as-judge",
+      "expected": "rubric: Pass only if all critical meaning is preserved: 1) current state and actor/time placeholders remain intact, 2) the prohibition on clearing while running is preserved, 3) the bypass condition (unchecking the prevention option) is preserved, and 4) no operational meaning is added or removed.",
+      "output": "Tarea está actualmente en un estado {{state}} iniciada por el usuario {{user}} a las {{time}}. El usuario no puede borrar esta tarea hasta que termine su ejecución o hasta que otro usuario desmarque la opción «Evitar reejecución si la tarea está en ejecución» en el cuadro de diálogo de borrado.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 13,
+      "cached": true
+    },
+    {
+      "id": "Q11",
+      "question": "Are you sure you want to delete {{ '{{resourceName}}' }}? This action cannot be undone.",
+      "check_type": "llm-as-judge",
+      "expected": "rubric: Pass only if the translation is clear and unambiguous for destructive action UX: it must keep explicit confirmation intent, preserve irreversibility, and keep {{resourceName}} exactly unchanged.",
+      "output": "¿Estás seguro de que deseas eliminar {{resourceName}}? Esta acción no se puede deshacer.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 15,
+      "cached": true
+    },
+    {
+      "id": "Q12",
+      "question": "Cannot Clear Task Instance",
+      "check_type": "llm-as-judge",
+      "expected": "rubric: Pass if translation is concise and UI-appropriate (short label style), professional/neutral Spanish, and preserves the exact inability meaning.",
+      "output": "No se puede borrar la instancia de tarea",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 15,
+      "cached": true
+    }
+  ]
+}

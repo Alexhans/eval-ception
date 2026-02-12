@@ -1,0 +1,114 @@
+{
+  "$schema": "https://spec.ai-evals.io/cert/v0.1.0/schema.json",
+  "exam": {
+    "id": "simple-exam",
+    "version": "0.1.0",
+    "source": "https://github.com/Alexhans/eval-ception/blob/main/docs/simple-exam.md"
+  },
+  "cert": {
+    "id": "eval-IUA-2026-02-21T22:24:36",
+    "issued": "2026-02-21"
+  },
+  "agent": {
+    "name": "ollama_agent"
+  },
+  "environment": {
+    "evaluated_at": "2026-02-21T22:24:36.902Z",
+    "framework": "promptfoo",
+    "framework_version": "0.120.25",
+    "platform": "linux/x64",
+    "total_duration_ms": 3289,
+    "grading_tokens": 1385
+  },
+  "evaluator": {
+    "name": "promptfoo",
+    "version": "0.120.25",
+    "grader_model": "deepseek-r1:14b"
+  },
+  "items": [
+    {
+      "id": "Q1",
+      "question": "Who created this website?",
+      "check_type": "deterministic",
+      "expected": "Alex | Guglielmone",
+      "output": "Alex Guglielmone Nemi",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 181,
+      "cached": true
+    },
+    {
+      "id": "Q2",
+      "question": "What tools are open source? (Name all, don't name those that aren't)",
+      "check_type": "deterministic",
+      "expected": "Promptfoo | DeepEval | must not contain: Braintrust | must not contain: Langsmith",
+      "output": "The open source tools listed are: Arize Phoenix, DeepEval, Giskard, Langfuse, Promptfoo, Pydantic AI, and Ragas.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 182,
+      "cached": true
+    },
+    {
+      "id": "Q3",
+      "question": "Does promptfoo have built-in caching? Start your answer with lowercase yes or no.",
+      "check_type": "deterministic",
+      "expected": "^\\s*yes\\b",
+      "output": "yes",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 183,
+      "cached": true
+    },
+    {
+      "id": "Q4",
+      "question": "Does deepeval have built-in caching? Start your answer with lowercase yes or no.",
+      "check_type": "deterministic",
+      "expected": "^\\s*no\\b",
+      "output": "no",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 183,
+      "cached": true
+    },
+    {
+      "id": "Q5",
+      "question": "Does Ragas have confirmed support for streaming evaluation? Start your answer with one of: lowercase yes, no, unknown",
+      "check_type": "deterministic",
+      "expected": "^\\s*unknown\\b",
+      "output": "unknown",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 7,
+      "cached": true
+    },
+    {
+      "id": "Q6",
+      "question": "What methodology does this website use to evaluate tools?",
+      "check_type": "llm-as-judge",
+      "expected": "rubric: Pass only if the answer clearly includes ALL of the following: 1) The methodology is evidence-based / hands-on testing. 2) It explains the legend idea that uppercase marks tested claims (for example Y/N/P),\n   and lowercase marks documentation claims not yet verified (for example y/n/p).\n3) It mentions unknown/`?` is used when information is not established. Fail if one or more required elements are missing, or if the answer invents unsupported methodology details.",
+      "output": "The website evaluates tools using a methodology that involves defining specific criteria (e.g., deterministic tests, caching, tool call validation) and categorizing each tool's capabilities based on testing or documentation. Features are labeled with symbols (Y, y, N, n, P, p, ?) to indicate verification status: 'Y' for tested and works, 'y' for documented but unverified, 'N' for not supported, 'n' for documented but unverified, 'P' for partial support, and '?' for unknown. The evaluation also considers open-source status, self-hosting, and language compatibility. The methodology emphasizes transparency, with feedback encouraged to refine the comparisons.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 8,
+      "cached": true
+    },
+    {
+      "id": "Q7",
+      "question": "How does this website explain the value of AI evals to different audiences?",
+      "check_type": "llm-as-judge",
+      "expected": "rubric: Pass if the answer references at least three distinct roles or audiences (e.g. engineers, product managers, scientists, founders) and explains a different value or benefit for each. Fail if it gives a generic explanation that does not differentiate by role.",
+      "output": "The website explains the value of AI evals to different audiences through tailored explanations on its homepage. For software engineers, it emphasizes control, fast development, and preventing regressions. Product managers are highlighted with benefits like cutting through hype and using proof. Scientists (both coding and non-coding) are addressed by focusing on evaluation methods relevant to their workflows. Non-technical founders receive explanations centered on strategic control and validation. The core message across all audiences is that evals provide structured validation, enabling reliable progress and reducing uncertainty.",
+      "score": 1,
+      "passed": true,
+      "grader_note": "All assertions passed",
+      "latency_ms": 9,
+      "cached": true
+    }
+  ]
+}

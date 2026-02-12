@@ -1,0 +1,200 @@
+description: "Airflow Spanish Localizer incremental exam (one-test build)"
+
+tags:
+  exam_id: airflow-localizer-es-incremental
+  exam_version: "0.1.0"
+  exam_source: "airflow/.github/skills/airflow-translations/SKILL.md"
+
+providers:
+  - id: opencode:sdk
+    label: "opencode_sdk"
+    config:
+      includeDebugMetrics: true
+      appendUsageToOutput: true
+      working_dir: "."
+      tools:
+        # read: true
+        # webfetch: true
+        # question: true
+        skill: true
+  - id: "python:promptfoo_provider_pydantic_skills.py"
+    label: "pydantic_skills_ollama"
+    config:
+      provider: "ollama"
+      model: "gpt-oss:20b"
+      ollamaBaseUrl: "http://127.0.0.1:11434/v1"
+
+defaultTest:
+  options:
+    provider: "ollama:chat:deepseek-r1:14b"
+
+prompts:
+  - |
+    Use airflow-translations skill to translate the following Airflow UI source text to Spanish.
+    Return only the translated text, with no explanation.
+    Source: "{{source}}"
+
+tests:
+  - vars:
+      intent: "Template variable integrity"
+      # Real source from en/dags.json
+      source: "Mark {{ '{{type}}' }} as {{ '{{state}}' }}"
+    assert:
+      - type: contains
+        value: "{{ '{{type}}' }}"
+      - type: contains
+        value: "{{ '{{state}}' }}"
+      - type: not-contains
+        value: "{{ '{{tipo}}' }}"
+      - type: not-contains
+        value: "{{ '{{estado}}' }}"
+
+  - vars:
+      intent: "Template variable integrity (diacritics trap)"
+      # Real source from en/common.json
+      source: "Press {{ '{{hotkey}}' }} to scroll to {{ '{{direction}}' }}"
+    assert:
+      - type: contains
+        value: "{{ '{{hotkey}}' }}"
+      - type: contains
+        value: "{{ '{{direction}}' }}"
+      - type: not-contains
+        value: "{{ '{{tecla}}' }}"
+      - type: not-regex
+        value: "{{ '\\{\\{direcci[oó]n\\}\\}' }}"
+
+  - vars:
+      intent: "Protected term integrity"
+      source: "The example Dag uses XCom variables to pass state between tasks. It has a Pool for resources that are scarce. The Triggerer is an internal element. Backfills can be triggered by the API."
+    assert:
+      - type: contains
+        value: "Dag"
+      - type: contains
+        value: "XCom"
+      - type: contains
+        value: "Pool"
+      - type: contains
+        value: "Backfill"
+      - type: contains
+        value: "Triggerer"
+      - type: not-contains
+        value: "DAG"
+
+  - vars:
+      intent: "JSON glossary integrity"
+      source: '{"task":"Task","taskInstance":"Task Instance","taskGroup":"Task Group"}'
+    assert:
+      - type: is-json
+      - type: icontains
+        value: '"task"'
+      - type: icontains
+        value: '"taskInstance"'
+      - type: icontains
+        value: '"taskGroup"'
+      - type: icontains
+        value: "Tarea"
+      - type: icontains
+        value: "Instancia de Tarea"
+      - type: icontains
+        value: "Grupo de Tareas"
+
+  - vars:
+      intent: "Plural key integrity"
+      source: '{"dagRun_one":"Dag Run","dagRun_other":"Dag Runs","dagRun_many":"Dag Runs"}'
+    assert:
+      - type: is-json
+      - type: icontains
+        value: '"dagRun_one"'
+      - type: icontains
+        value: '"dagRun_other"'
+      - type: icontains
+        value: '"dagRun_many"'
+      - type: icontains
+        value: "Ejecuci"
+      - type: contains
+        value: "Dag"
+
+  - vars:
+      intent: "Destructive warning integrity"
+      source: "Are you sure you want to delete {{ '{{resourceName}}' }}? This action cannot be undone."
+    assert:
+      - type: contains
+        value: "{{ '{{resourceName}}' }}"
+      - type: icontains
+        value: "deshacer"
+      - type: not-contains
+        value: "{{ '{{nombreRecurso}}' }}"
+      - type: not-regex
+        value: '^".*"$'
+
+  - vars:
+      intent: "Long string placeholder integrity"
+      source: "Task is currently in a {{ '{{state}}' }} state started by user {{ '{{user}}' }} at {{ '{{time}}' }}. The user is unable to clear this task until it is done running or a user unchecks the \"Prevent rerun if task is running\" option in the clear task dialog."
+    assert:
+      - type: contains
+        value: "{{ '{{state}}' }}"
+      - type: contains
+        value: "{{ '{{user}}' }}"
+      - type: contains
+        value: "{{ '{{time}}' }}"
+      - type: icontains
+        value: "tarea"
+      - type: not-regex
+        value: '^".*"$'
+
+  - vars:
+      intent: "Hotkey literal integrity"
+      source: '{"hotkey":"e","tooltip":"Press {{ ''{{hotkey}}'' }} to toggle expand"}'
+    assert:
+      - type: is-json
+      - type: contains
+        value: '"hotkey"'
+      - type: contains
+        value: '"e"'
+      - type: contains
+        value: "{{ '{{hotkey}}' }}"
+      - type: not-contains
+        value: "{{ '{{tecla}}' }}"
+
+  - vars:
+      intent: "Trigger noun/verb disambiguation"
+      source: '{"triggerRule":"Trigger Rule","triggeredBy":"Triggered By"}'
+    assert:
+      - type: is-json
+      - type: llm-rubric
+        value: >
+          Pass only if the translation disambiguates noun vs verb usage correctly:
+          1) "triggerRule" is translated as a rule/label term (for example, "Regla de Activación"),
+          2) "triggeredBy" is translated as a passive/agent phrase (for example, "Activado por"),
+          and 3) it does not keep both as untranslated "Trigger".
+
+  - vars:
+      intent: "Long operational semantic fidelity"
+      source: "Task is currently in a {{ '{{state}}' }} state started by user {{ '{{user}}' }} at {{ '{{time}}' }}. The user is unable to clear this task until it is done running or a user unchecks the \"Prevent rerun if task is running\" option in the clear task dialog."
+    assert:
+      - type: llm-rubric
+        value: >
+          Pass only if all critical meaning is preserved:
+          1) current state and actor/time placeholders remain intact,
+          2) the prohibition on clearing while running is preserved,
+          3) the bypass condition (unchecking the prevention option) is preserved,
+          and 4) no operational meaning is added or removed.
+
+  - vars:
+      intent: "Destructive action warning clarity"
+      source: "Are you sure you want to delete {{ '{{resourceName}}' }}? This action cannot be undone."
+    assert:
+      - type: llm-rubric
+        value: >
+          Pass only if the translation is clear and unambiguous for destructive action UX:
+          it must keep explicit confirmation intent, preserve irreversibility, and keep
+          {{resourceName}} exactly unchanged.
+
+  - vars:
+      intent: "UI concision and tone"
+      source: "Cannot Clear Task Instance"
+    assert:
+      - type: llm-rubric
+        value: >
+          Pass if translation is concise and UI-appropriate (short label style),
+          professional/neutral Spanish, and preserves the exact inability meaning.

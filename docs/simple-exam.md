@@ -10,7 +10,7 @@ The question set is intentionally simple and small to be easy to understand.  It
 | Agent | Any system that answers the question (local model, CLI agent, custom endpoint) |
 | Assertion | How correctness is checked (deterministic or LLM-as-judge) |
 | Exam | The set of questions + assertions used as a qualification gate |
-| tool folder | A specific implementation of the same exam idea (`promptfoo/`, `deepeval/`) |
+| tool folder | A specific implementation of the same exam idea (`promptfoo/`, `deepeval/`, `langfuse/`) |
 
 ## Why This Matters
 
@@ -52,3 +52,4 @@ Notes:
 |---|---|---|---|
 | Promptfoo | [`promptfoo/README.md`](../promptfoo/README.md) | [`promptfoo/promptfooconfig.yaml`](../promptfoo/promptfooconfig.yaml) | Promptfoo local eval store (`.promptfoo/`) + `promptfoo view` |
 | DeepEval | [`deepeval/README.md`](../deepeval/README.md) | [`deepeval/test_questions.py`](../deepeval/test_questions.py) | Pytest output (terminal/CI) |
+| Langfuse | [`langfuse/README.md`](../langfuse/README.md) | [`langfuse/test_questions.py`](../langfuse/test_questions.py) | Pytest output + Langfuse dashboard (`localhost:3000`) |
