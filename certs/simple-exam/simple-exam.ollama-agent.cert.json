@@ -1,5 +1,5 @@
 {
-  "$schema": "https://spec.ai-evals.io/cert/v0.1.0/schema.json",
+  "$schema": "https://ai-evals.io/spec/cert/v0.1.0/schema.json",
   "exam": {
     "id": "simple-exam",
     "version": "0.1.0",

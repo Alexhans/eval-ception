@@ -18,7 +18,8 @@ import uuid
 from datetime import date
 from pathlib import Path
 
-SCHEMA = "https://spec.ai-evals.io/cert/v0.1.0/schema.json"
+# Canonical URL is ai-evals.io/spec/... — will migrate to spec.ai-evals.io once that subdomain has community consensus and stable DNS.
+SCHEMA = "https://ai-evals.io/spec/cert/v0.1.0/schema.json"
 
 
 def infer_check_type(component_results: list) -> str:
