@@ -1,6 +1,8 @@
+
+
 # Airflow Localizer (Spanish) Exam
 
-Real example of AI Evals for Agent Skills in the context of Localization for Airflow:
+Real example of how to evaluate an AI agent skill using the exam/cert pattern. The domain is Spanish localization of the Airflow UI, based on a real open contribution:
 
 - [Mailing list](https://www.mail-archive.com/commits%40airflow.apache.org/msg492611.html)
 - [GitHub issue](https://github.com/apache/airflow/issues/61984#issuecomment-3928108863)

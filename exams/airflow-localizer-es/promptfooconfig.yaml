@@ -30,7 +30,7 @@ defaultTest:
 
 prompts:
   - |
-    Use airflow-translations skill to translate the following Airflow UI source text to Spanish.
+    Read locales/es.md from the airflow-translations skill, then translate the following Airflow UI source text to Spanish following those guidelines.
     Return only the translated text, with no explanation.
     Source: "{{source}}"
 
@@ -169,6 +169,42 @@ tests:
           and 3) it does not keep both as untranslated "Trigger".
 
   - vars:
+      intent: "Trigger button label stays in English while verb form is translated"
+      source: '{"triggerDag": {"button": "Trigger", "title": "Trigger Dag"}}'
+    assert:
+      - type: is-json
+      - type: icontains
+        value: "Activar Dag"
+      - type: not-regex
+        value: '"button"\s*:\s*"Activar'
+      - type: contains
+        value: "Trigger"
+
+  - vars:
+      intent: "Trigger and Triggerer kept in English as noun component labels"
+      source: '{"class": "Trigger Class", "id": "Trigger ID", "title": "Triggerer Information"}'
+    assert:
+      - type: is-json
+      - type: icontains
+        value: "Clase del Trigger"
+      - type: icontains
+        value: "ID del Trigger"
+      - type: contains
+        value: "Triggerer"
+
+  - vars:
+      intent: "Trigger disambiguation across verb, noun, and button in same object"
+      source: '{"button": "Trigger", "triggeredBy": "Triggered by", "class": "Trigger Class"}'
+    assert:
+      - type: is-json
+      - type: icontains
+        value: "Activado por"
+      - type: icontains
+        value: "Clase del Trigger"
+      - type: not-regex
+        value: '"button"\s*:\s*"Activar'
+
+  - vars:
       intent: "Long operational semantic fidelity"
       source: "Task is currently in a {{ '{{state}}' }} state started by user {{ '{{user}}' }} at {{ '{{time}}' }}. The user is unable to clear this task until it is done running or a user unchecks the \"Prevent rerun if task is running\" option in the clear task dialog."
     assert:
@@ -196,5 +232,7 @@ tests:
     assert:
       - type: llm-rubric
         value: >
-          Pass if translation is concise and UI-appropriate (short label style),
-          professional/neutral Spanish, and preserves the exact inability meaning.
+          Pass if the translation preserves the exact inability meaning in
+          professional/neutral Spanish with title-case capitalization on key nouns.
+          The expected translation is "No Se Puede Limpiar la Instancia de Tarea".
+          Do not penalize for length — this string requires a full phrase in Spanish.
