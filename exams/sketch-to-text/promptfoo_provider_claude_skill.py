@@ -21,6 +21,13 @@ def call_api(prompt: str, options: dict[str, Any], context: dict[str, Any]) -> d
 
     prompt = os.path.expandvars(prompt)
 
+    # Remove stale output so Claude always does a fresh conversion
+    vars_ = context.get("vars", {}) if isinstance(context, dict) else {}
+    input_file = vars_.get("file", "")
+    if input_file:
+        output_path = Path(os.path.expandvars(input_file)).with_suffix(".qmd")
+        output_path.unlink(missing_ok=True)
+
     proc = subprocess.run(
         ["claude", "--plugin-dir", plugin_dir, "-p", prompt, "--allowedTools", "Read,Write"],
         capture_output=True, text=True, check=False, cwd=plugin_dir,
