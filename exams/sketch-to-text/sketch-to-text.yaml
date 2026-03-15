@@ -1,0 +1,136 @@
+description: "sketch-to-text skill eval — Claude CLI"
+
+tags:
+  exam_id: sketch-to-text
+  exam_version: "0.1.0"
+
+providers:
+  - id: "python:promptfoo_provider_claude_skill.py"
+    label: "claude_skill"
+    config:
+      pluginDir: "{{env.BLOG_SAMPLES_DIR}}"
+    timeout: 180000
+
+defaultTest:
+  options:
+    provider: "ollama:chat:deepseek-r1:14b"
+
+prompts:
+  - "convert {{file}} to quarto"
+
+tests:
+  - vars:
+      intent: "Flowchart with decisions, self-loop, Firebase branch"
+      file: "{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/diagram-1.pdf"
+    assert:
+      - type: icontains
+        value: "flowchart"
+      - type: icontains
+        value: "{mermaid}"
+      - type: icontains
+        value: "Skill uncertainty notes"
+      - type: icontains
+        value: "Firebase"
+      - type: llm-rubric
+        value: >
+          Pass if the output matches the structure and intent of this reference output.
+          Check: correct Mermaid diagram type, nodes and edges match, decision branches present,
+          self-loop on iterate step, Firebase node present, uncertainty callout included.
+          Reference: file://{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/ground-truth/diagram-1.expected.qmd
+
+  - vars:
+      intent: "Calendar sync flowchart LR with bidirectional arrow, process steps list"
+      file: "{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/diagram-2.pdf"
+    assert:
+      - type: icontains
+        value: "flowchart"
+      - type: icontains
+        value: "{mermaid}"
+      - type: icontains
+        value: "Skill uncertainty notes"
+      - type: icontains
+        value: "Calendar"
+      - type: llm-rubric
+        value: >
+          Pass if the output matches the structure and intent of this reference output.
+          Check: left-to-right flowchart, Google Calendar and Work Outlook nodes present,
+          bidirectional arrow (<-->) between Calendar and Anon Blocks, process steps list
+          (Draw / Export / Agent skill), uncertainty callout included.
+          Reference: file://{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/ground-truth/diagram-2.expected.qmd
+
+  - vars:
+      intent: "Human and Agent accountability — subgraph Work, Agent takes exam"
+      file: "{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/diagram-3.pdf"
+    assert:
+      - type: icontains
+        value: "flowchart"
+      - type: icontains
+        value: "{mermaid}"
+      - type: icontains
+        value: "Skill uncertainty notes"
+      - type: icontains
+        value: "subgraph"
+      - type: llm-rubric
+        value: >
+          Pass if the output matches the structure and intent of this reference output.
+          Check: Agent node takes Exam, Exam connects into a subgraph Work containing Human,
+          circle node shapes for Agent and Human (()), prose intro explaining accountability,
+          uncertainty callout included.
+          Reference: file://{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/ground-truth/diagram-3.expected.qmd
+
+  - vars:
+      intent: "Data pipeline — Bus/Tram/Prices inputs, Simulation, Dashboard and result_table outputs"
+      file: "{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/diagram-4.pdf"
+    assert:
+      - type: icontains
+        value: "flowchart"
+      - type: icontains
+        value: "{mermaid}"
+      - type: icontains
+        value: "Skill uncertainty notes"
+      - type: icontains
+        value: "Dashboard"
+      - type: llm-rubric
+        value: >
+          Pass if the output matches the structure and intent of this reference output.
+          Check: Bus, Tram, Prices as circle input nodes (()), Public Transport and Simulation
+          as rectangle nodes, double-circle output nodes ((())) for Dashboard and result_table,
+          data sources mentioned in prose, uncertainty callout present.
+          Reference: file://{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/ground-truth/diagram-4.expected.qmd
+
+  - vars:
+      intent: "Design/De-Risk/Jumpstart banner with three labelled branches"
+      file: "{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/diagram-5.pdf"
+    assert:
+      - type: icontains
+        value: "flowchart"
+      - type: icontains
+        value: "{mermaid}"
+      - type: icontains
+        value: "Jumpstart"
+      - type: llm-rubric
+        value: >
+          Pass if the output matches the structure and intent of this reference output.
+          Check: single banner node branching to three nodes via labelled edges
+          (Design → Intent, De-Risk/Diminish → goals, Jumpstart → Guardrails),
+          multiline backtick label on the goals node with at least two of the three
+          sub-goals (Reduce effort / Increase ROI / Fail fast).
+          Reference: file://{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/ground-truth/diagram-5.expected.qmd
+
+  - vars:
+      intent: "Two agent models side-by-side — Pi-mono (event-driven) and ChatGPT (request/response)"
+      file: "{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/diagram-6.pdf"
+    assert:
+      - type: icontains
+        value: "{mermaid}"
+      - type: icontains
+        value: "Skill uncertainty notes"
+      - type: icontains
+        value: "Agent"
+      - type: llm-rubric
+        value: >
+          Pass if the output matches the structure and intent of this reference output.
+          Check: two separate Mermaid diagrams (Pi-mono and ChatGPT sections), Pi-mono has
+          bidirectional arrow (<-->) and a Signal/event diamond node, ChatGPT is LR with
+          send/response edges, uncertainty callout mentions Pi-mono name ambiguity.
+          Reference: file://{{env.BLOG_SAMPLES_DIR}}/skills/sketch-to-text/evals/ground-truth/diagram-6.expected.qmd
